@@ -556,7 +556,7 @@ CREATE TABLE Pagamento (
     PRIMARY KEY (ID)
 );
 INSERT INTO Pagamento (pagamento) values ('Dinheiro');
-INSERT INTO Pagamento (pagamento) values ('Débido');
+INSERT INTO Pagamento (pagamento) values ('Débito');
 INSERT INTO Pagamento (pagamento) values ('Crédito');
 -- ----------------------------------------------------------------------------
 --                            FIM DO CÓDIGO                                  --
