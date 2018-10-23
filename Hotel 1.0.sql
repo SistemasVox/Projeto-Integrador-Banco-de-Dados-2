@@ -558,6 +558,28 @@ CREATE TABLE Pagamento (
 INSERT INTO Pagamento (pagamento) values ('Dinheiro');
 INSERT INTO Pagamento (pagamento) values ('Débito');
 INSERT INTO Pagamento (pagamento) values ('Crédito');
+
+
+-- ------------------------------------------------------------------------
+--                   Criação dos Funções no SGBD                        --
+-- ------------------------------------------------------------------------
+
+-- ------------------------------------------------------------------------
+--                Fim Criação dos Funções no SGBD                       --
+-- ------------------------------------------------------------------------
+
+-- ------------------------------------------------------------------------------
+--                   Criação dos Procedimentos no SGBD                        --
+-- ------------------------------------------------------------------------------
+select Nome_hospede, Tipo_apartamento as Ap, Nome_produto, Desc_produto, sum(Preco) total
+from hospede h, apartamentos ap, reserva re,  produtos pro, solicitacao_servico soli, ser_diversos ser
+where soli.CPF = re.CPF and soli.Cod_servico = ser.Cod_servico and soli.Cod_apartamento = ap.Cod_apartamento and
+ser.Cod_produto = pro.Cod_produto and
+re.CPF = h.CPF and re.Cod_apartamento = ap.Cod_apartamento group by Nome_hospede
+;
+-- ------------------------------------------------------------------------------
+--                 Fim Criação dos Procedimentos no SGBD                      --
+-- ------------------------------------------------------------------------------
 -- ----------------------------------------------------------------------------
 --                            FIM DO CÓDIGO                                  --
 -- ----------------------------------------------------------------------------
