@@ -571,7 +571,7 @@ INSERT INTO Pagamento (pagamento) values ('Crédito');
 -- ------------------------------------------------------------------------------
 --                   Criação dos Procedimentos no SGBD                        --
 -- ------------------------------------------------------------------------------
-select Nome_hospede, Tipo_apartamento as Ap, Nome_produto, Desc_produto, sum(Preco) total
+select Nome_hospede, Tipo_apartamento as Ap, sum(Preco) total -- , Nome_produto, Desc_produto, 
 from hospede h, apartamentos ap, reserva re,  produtos pro, solicitacao_servico soli, ser_diversos ser
 where soli.CPF = re.CPF and soli.Cod_servico = ser.Cod_servico and soli.Cod_apartamento = ap.Cod_apartamento and
 ser.Cod_produto = pro.Cod_produto and
