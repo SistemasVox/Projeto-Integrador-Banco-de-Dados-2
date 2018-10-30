@@ -57,6 +57,17 @@ desc Apartamentos;
 DROP TABLE Apartamentos;
 --  ----------------  --
 
+CREATE TABLE valorDiariasAptos (
+    Cod_apartamento INT NOT NULL,
+    valor_Apto NUMERIC(10 , 2 ),
+    FOREIGN KEY (Cod_apartamento)
+        REFERENCES Apartamentos (Cod_apartamento)
+);
+--     Manutenção     --
+desc valorDiariasAptos;
+DROP TABLE valorDiariasAptos;
+--  ----------------  --
+
 CREATE TABLE Reserva (
     Cod_reserva INT NOT NULL AUTO_INCREMENT,
     Tempo_Hospedagem INT(3) NOT NULL,
@@ -206,7 +217,7 @@ BEGIN
 END $
 DELIMITER ;
 
--- G) Calcular Valor da Nota Fiscal 
+-- G) Gerar Tipo de Pagamento da Nota Fiscal 
 DELIMITER $
 CREATE FUNCTION f_pagamento() RETURNS VARCHAR(8)
 BEGIN
@@ -274,6 +285,20 @@ INSERT INTO Apartamentos (Cod_apartamento, Tipo_apartamento)
 Values (3, 'Suite');
 INSERT INTO Apartamentos (Cod_apartamento, Tipo_apartamento)
 Values (4, 'Presidencial');
+/* ************************************************** */
+
+-- ---------------------------------------------------
+--                APARTAMENTO VALOR                --
+-- ---------------------------------------------------
+SELECT * FROM valorDiariasAptos;
+INSERT INTO valorDiariasAptos (Cod_apartamento, valor_Apto)
+Values (1, 249.90);
+INSERT INTO valorDiariasAptos (Cod_apartamento, valor_Apto)
+Values (2, 149.90);
+INSERT INTO valorDiariasAptos (Cod_apartamento, valor_Apto)
+Values (3, 499.90);
+INSERT INTO valorDiariasAptos (Cod_apartamento, valor_Apto)
+Values (4, 999.90);
 /* ************************************************** */
 
 -- ---------------------------------------------------
@@ -580,6 +605,7 @@ re.CPF = h.CPF and re.Cod_apartamento = ap.Cod_apartamento group by Nome_hospede
 -- ------------------------------------------------------------------------------
 --                 Fim Criação dos Procedimentos no SGBD                      --
 -- ------------------------------------------------------------------------------
+
 -- ----------------------------------------------------------------------------
 --                            FIM DO CÓDIGO                                  --
 -- ----------------------------------------------------------------------------
