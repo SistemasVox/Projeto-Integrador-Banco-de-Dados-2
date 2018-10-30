@@ -596,11 +596,17 @@ INSERT INTO Pagamento (pagamento) values ('Crédito');
 -- ------------------------------------------------------------------------------
 --                   Criação dos Procedimentos no SGBD                        --
 -- ------------------------------------------------------------------------------
-select Nome_hospede, Tipo_apartamento as Ap, sum(Preco + (tempoDeHospedagem(h.CPF) * valor_Apto)) total -- , Nome_produto, Desc_produto, 
-from hospede h, apartamentos ap, reserva re,  produtos pro, solicitacao_servico soli, ser_diversos ser, valordiariasaptos varD
+-- Somente a diária
+select Nome_hospede, Tipo_apartamento as Ap, sum((tempoDeHospedagem(h.CPF) * valor_Apto)) total -- , Nome_produto, Desc_produto, 
+from hospede h, apartamentos ap, reserva re, valordiariasaptos varD
+where varD.Cod_apartamento = ap.Cod_apartamento and
+re.CPF = h.CPF and re.Cod_apartamento = ap.Cod_apartamento group by Nome_hospede
+;
+-- Somente o consumo de ítens
+select Nome_hospede, Tipo_apartamento as Ap, sum(Preco) total -- , Nome_produto, Desc_produto, 
+from hospede h, apartamentos ap, reserva re,  produtos pro, solicitacao_servico soli, ser_diversos ser
 where soli.CPF = re.CPF and soli.Cod_servico = ser.Cod_servico and soli.Cod_apartamento = ap.Cod_apartamento and
 ser.Cod_produto = pro.Cod_produto and
-varD.Cod_apartamento = ap.Cod_apartamento and
 re.CPF = h.CPF and re.Cod_apartamento = ap.Cod_apartamento group by Nome_hospede
 ;
 -- ------------------------------------------------------------------------------
