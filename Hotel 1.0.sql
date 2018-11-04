@@ -588,7 +588,13 @@ INSERT INTO Pagamento (pagamento) values ('Crédito');
 -- ------------------------------------------------------------------------
 --                   Criação dos Funções no SGBD                        --
 -- ------------------------------------------------------------------------
-
+DROP function IF EXISTS `getCPF`;
+DELIMITER $
+CREATE FUNCTION getCPF(varN int) RETURNS varchar(14)
+BEGIN
+    RETURN (select CPF from conta where Num_nota_Fiscal = varN);
+END $
+DELIMITER ;
 -- ------------------------------------------------------------------------
 --                Fim Criação dos Funções no SGBD                       --
 -- ------------------------------------------------------------------------
@@ -600,15 +606,54 @@ INSERT INTO Pagamento (pagamento) values ('Crédito');
 select Nome_hospede, Tipo_apartamento as Ap, sum((tempoDeHospedagem(h.CPF) * valor_Apto)) total -- , tempoDeHospedagem(h.CPF) TempHos -- , Nome_produto, Desc_produto, 
 from hospede h, apartamentos ap, reserva re, valordiariasaptos varD
 where varD.Cod_apartamento = ap.Cod_apartamento and
-re.CPF = h.CPF and re.Cod_apartamento = ap.Cod_apartamento group by Nome_hospede
-;
+re.CPF = h.CPF and re.Cod_apartamento = ap.Cod_apartamento group by Nome_hospede;
 -- Somente o consumo de ítens
 select Nome_hospede, Tipo_apartamento as Ap, sum(Preco) total -- , Nome_produto, Desc_produto, 
 from hospede h, apartamentos ap, reserva re,  produtos pro, solicitacao_servico soli, ser_diversos ser
 where soli.CPF = re.CPF and soli.Cod_servico = ser.Cod_servico and soli.Cod_apartamento = ap.Cod_apartamento and
 ser.Cod_produto = pro.Cod_produto and
-re.CPF = h.CPF and re.Cod_apartamento = ap.Cod_apartamento group by Nome_hospede
-;
+re.CPF = h.CPF and re.Cod_apartamento = ap.Cod_apartamento group by Nome_hospede;
+
+
+USE `Hotel`;
+DROP procedure IF EXISTS `atualiza_nota_fiscal`;
+DELIMITER $$
+CREATE PROCEDURE atualiza_nota_fiscal ()
+BEGIN
+    DECLARE total INT;
+    DECLARE diaria, consumo NUMERIC(10 , 2 );
+    DECLARE i INT DEFAULT 1;    
+    SET total = (select max(Num_nota_Fiscal) from conta);
+    
+    
+    WHILE i <= total DO
+		SET diaria = 0;
+		SET consumo = 0;
+    
+    -- Diária
+select sum((tempoDeHospedagem(h.CPF) * valor_Apto)) into diaria
+from hospede h, apartamentos ap, reserva re, valordiariasaptos varD
+where varD.Cod_apartamento = ap.Cod_apartamento and
+re.CPF = h.CPF and re.Cod_apartamento = ap.Cod_apartamento and h.CPF = getCPF(i)  group by Nome_hospede;
+	-- Consumo de ítens
+select sum(Preco) into consumo
+from hospede h, apartamentos ap, reserva re,  produtos pro, solicitacao_servico soli, ser_diversos ser
+where soli.CPF = re.CPF and soli.Cod_servico = ser.Cod_servico and soli.Cod_apartamento = ap.Cod_apartamento and
+ser.Cod_produto = pro.Cod_produto and
+re.CPF = h.CPF and re.Cod_apartamento = ap.Cod_apartamento and h.CPF = getCPF(i) group by Nome_hospede;
+    
+    -- Atualizar
+    UPDATE conta SET Valor_total = (diaria + consumo) where CPF = getCPF(i);
+	
+    SET i = i + 1;
+  END WHILE;
+    select concat('Valor das ', total,' Notas Fiscais foram atualizadas.');
+END $$
+DELIMITER ;
+
+call atualiza_nota_fiscal();
+
+select * from conta;
 -- ------------------------------------------------------------------------------
 --                 Fim Criação dos Procedimentos no SGBD                      --
 -- ------------------------------------------------------------------------------
