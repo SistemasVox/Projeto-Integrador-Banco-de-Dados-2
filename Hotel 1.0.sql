@@ -6,8 +6,8 @@
 -- Matéria: Banco de Dados 2.                                                --
 -- Contato: dj.marcelo.2009@gmail.com                                        --
 -- -----------------------------------------------------------------------------
--- https://format-sql.com https://sqlformat.org
--- http://www.4devs.com.br/gerador_de_pessoas
+-- https://format-sql.com https://sqlformat.org http://sql-format.com
+-- http://www.4devs.com.br/gerador_de_pessoas https://codebeautify.org/sqlformatter
 
 /* Descrição:
 Um microempresário resolveu construir um hotel em um local de alta chance de crescimento em Uberlândia,
@@ -588,11 +588,11 @@ INSERT INTO Pagamento (pagamento) values ('Crédito');
 -- ------------------------------------------------------------------------
 --                   Criação dos Funções no SGBD                        --
 -- ------------------------------------------------------------------------
-DROP function IF EXISTS `getCPF`;
+DROP FUNCTION IF EXISTS `getCPF`;
 DELIMITER $
-CREATE FUNCTION getCPF(varN int) RETURNS varchar(14)
+	CREATE FUNCTION getCPF(varN int) RETURNS varchar(14)
 BEGIN
-    RETURN (select CPF from conta where Num_nota_Fiscal = varN);
+    RETURN (SELECT CPF FROM conta WHERE Num_nota_Fiscal = varN);
 END $
 DELIMITER ;
 -- ------------------------------------------------------------------------
@@ -620,13 +620,13 @@ DROP procedure IF EXISTS `atualiza_nota_fiscal`;
 DELIMITER $$
 CREATE PROCEDURE atualiza_nota_fiscal ()
 BEGIN
-    DECLARE total INT;
-    DECLARE diaria, consumo NUMERIC(10 , 2 );
-    DECLARE i INT DEFAULT 1;    
-    SET total = (select max(Num_nota_Fiscal) from conta);
+    DECLARE var_Min, var_Max, var_Cont INT DEFAULT 0;
+    DECLARE diaria, consumo NUMERIC(10 , 2 );   
+    SET var_Min = (select min(Num_nota_Fiscal) from conta);
+    SET var_Max = (select max(Num_nota_Fiscal) from conta);
     
     
-    WHILE i <= total DO
+    WHILE var_Min <= var_Max DO
 		SET diaria = 0;
 		SET consumo = 0;
     
@@ -634,26 +634,28 @@ BEGIN
 select sum((tempoDeHospedagem(h.CPF) * valor_Apto)) into diaria
 from hospede h, apartamentos ap, reserva re, valordiariasaptos varD
 where varD.Cod_apartamento = ap.Cod_apartamento and
-re.CPF = h.CPF and re.Cod_apartamento = ap.Cod_apartamento and h.CPF = getCPF(i)  group by Nome_hospede;
+re.CPF = h.CPF and re.Cod_apartamento = ap.Cod_apartamento and h.CPF = getCPF(var_Min)  group by Nome_hospede;
 	-- Consumo de ítens
 select sum(Preco) into consumo
 from hospede h, apartamentos ap, reserva re,  produtos pro, solicitacao_servico soli, ser_diversos ser
 where soli.CPF = re.CPF and soli.Cod_servico = ser.Cod_servico and soli.Cod_apartamento = ap.Cod_apartamento and
 ser.Cod_produto = pro.Cod_produto and
-re.CPF = h.CPF and re.Cod_apartamento = ap.Cod_apartamento and h.CPF = getCPF(i) group by Nome_hospede;
+re.CPF = h.CPF and re.Cod_apartamento = ap.Cod_apartamento and h.CPF = getCPF(var_Min) group by Nome_hospede;
     
     -- Atualizar
-    UPDATE conta SET Valor_total = (diaria + consumo) where CPF = getCPF(i);
+    UPDATE conta SET Valor_total = (diaria + consumo) where CPF = getCPF(var_Min);
 	
-    SET i = i + 1;
+    SET var_Min = var_Min + 1;
+    SET var_Cont = var_Cont + 1;
   END WHILE;
-    select concat('Valor das ', total,' Notas Fiscais foram atualizadas.');
+    select concat('Valor das (', (var_Cont),') Notas Fiscais foram atualizadas.');
 END $$
 DELIMITER ;
 
-call atualiza_nota_fiscal();
+CALL atualiza_nota_fiscal();
 
-select * from conta;
+SELECT * FROM conta;
+UPDATE conta SET Valor_total = 0.00;
 -- ------------------------------------------------------------------------------
 --                 Fim Criação dos Procedimentos no SGBD                      --
 -- ------------------------------------------------------------------------------
