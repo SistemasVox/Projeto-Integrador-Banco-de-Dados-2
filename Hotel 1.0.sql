@@ -694,6 +694,7 @@ ser.Cod_produto = pro.Cod_produto and pro.Nome_produto = ', quote(varProduto));
     
 END $$
 DELIMITER ;
+
 CALL criaViwerProduto('Almoço');
 select * from vw_almoço;
 select * from produtos;
