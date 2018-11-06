@@ -614,7 +614,7 @@ where soli.CPF = re.CPF and soli.Cod_servico = ser.Cod_servico and soli.Cod_apar
 ser.Cod_produto = pro.Cod_produto and
 re.CPF = h.CPF and re.Cod_apartamento = ap.Cod_apartamento group by Nome_hospede;
 
-
+-- 1) Crie um Procedimento que atualize o valor final das notas fiscais, incluindo (preço das suas diárias e consumo de ítens)
 USE `Hotel`;
 DROP procedure IF EXISTS `atualiza_nota_fiscal`;
 DELIMITER $$
@@ -656,6 +656,47 @@ CALL atualiza_nota_fiscal();
 
 SELECT * FROM conta;
 UPDATE conta SET Valor_total = 0.00;
+
+-- 2) Crie um Prodimento, que cria uma Viwer, essa Viwer criada lista os nomes dos hópedes que já consumiu o Produto,
+-- as colunas deve ser nome do hópede, tipo de apartamento que está hospedado,
+-- nome do produto e descrição do cliente que já consumiu o Produto.
+
+select Nome_hospede, Tipo_apartamento Ap, Nome_produto, Desc_produto
+from hospede h, apartamentos ap, reserva re, solicitacao_servico soli, ser_diversos ser, produtos pro
+where h.CPF = re.CPF and soli.CPF = re.CPF and
+soli.Cod_apartamento = ap.Cod_apartamento and soli.Cod_servico = ser.Cod_servico and 
+ser.Cod_produto = pro.Cod_produto and pro.Nome_produto like 'T%';
+-- group by Nome_hospede;
+
+
+DROP procedure IF EXISTS `criaViwerProduto`;
+DELIMITER $$
+CREATE PROCEDURE criaViwerProduto (varProduto varchar(255))
+BEGIN
+    DECLARE varResult INT DEFAULT 0;
+    SET varResult = (select count(*) from produtos where Nome_produto = varProduto);
+    
+    if (varResult != 0) then
+		SET @comando = CONCAT('Create view vw_', varProduto, ' as ');
+		SET @consulta = CONCAT('select Nome_hospede, Tipo_apartamento Ap, Nome_produto, Desc_produto
+from hospede h, apartamentos ap, reserva re, solicitacao_servico soli, ser_diversos ser, produtos pro
+where h.CPF = re.CPF and soli.CPF = re.CPF and
+soli.Cod_apartamento = ap.Cod_apartamento and soli.Cod_servico = ser.Cod_servico and 
+ser.Cod_produto = pro.Cod_produto and pro.Nome_produto = ', quote(varProduto));	        
+		SET @comando = CONCAT(@comando, @consulta);
+		PREPARE montar_view FROM @comando;
+		EXECUTE montar_view;
+		select concat('View: vw_', varProduto, ', criada com sucesso. (OK)');
+        
+        else
+			select concat('Produto: ', varProduto, ', não exite. (Erro)');
+    end if;
+    
+END $$
+DELIMITER ;
+CALL criaViwerProduto('Almoço');
+select * from vw_almoço;
+select * from produtos;
 -- ------------------------------------------------------------------------------
 --                 Fim Criação dos Procedimentos no SGBD                      --
 -- ------------------------------------------------------------------------------
