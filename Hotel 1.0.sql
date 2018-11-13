@@ -381,7 +381,7 @@ Values (6,'Bebida', 'Alcoólico', 6);
 -- ---------------------------------------------------
 --                   Pagamento                     --
 -- ---------------------------------------------------
-
+SELECT * FROM Pagamento;
 INSERT INTO Pagamento (pagamento) values ('Dinheiro');
 INSERT INTO Pagamento (pagamento) values ('Débito');
 INSERT INTO Pagamento (pagamento) values ('Crédito');
