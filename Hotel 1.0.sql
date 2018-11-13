@@ -669,9 +669,9 @@ ser.Cod_produto = pro.Cod_produto and pro.Nome_produto like 'T%';
 -- group by Nome_hospede;
 
 
-DROP procedure IF EXISTS `criaViwerProduto`;
+DROP procedure IF EXISTS `criaViewProduto`;
 DELIMITER $$
-CREATE PROCEDURE criaViwerProduto (varProduto varchar(255))
+CREATE PROCEDURE criaViewProduto (varProduto varchar(255))
 BEGIN
     DECLARE varResult INT DEFAULT 0;
     SET varResult = (select count(*) from produtos where Nome_produto = varProduto);
@@ -695,7 +695,7 @@ ser.Cod_produto = pro.Cod_produto and pro.Nome_produto = ', quote(varProduto));
 END $$
 DELIMITER ;
 
-CALL criaViwerProduto('Almoço');
+CALL criaViewProduto('Almoço');
 select * from vw_almoço;
 select * from produtos;
 -- ------------------------------------------------------------------------------
