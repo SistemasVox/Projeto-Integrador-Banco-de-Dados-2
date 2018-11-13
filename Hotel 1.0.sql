@@ -707,6 +707,24 @@ DELIMITER ;
 CALL criaViewProduto('Almoço');
 SELECT * FROM vw_almoço;
 SELECT * FROM produtos;
+
+-- 3) Crie uma Trigguer que verifique se a data da emissão da nota fiscal, não seja menor
+-- que a data corrente do dia.
+DROP trigger IF EXISTS `verifica_Update`;
+DELIMITER $
+ 
+CREATE TRIGGER verifica_Update BEFORE UPDATE
+ON conta FOR EACH ROW
+BEGIN
+  IF(new.Data_pagamento < CURRENT_DATE())
+  THEN SET @MSG = concat('Erro 1212, data inferior a de hoje [ ', CURRENT_DATE,' ].');
+  signal SQLSTATE '45000' SET MESSAGE_TEXT = @MSG;
+  END IF;
+END $
+ 
+DELIMITER ;
+
+update conta SET Data_pagamento = current_date() - interval 3 day where Num_nota_Fiscal = 1;
 -- ------------------------------------------------------------------------------
 --                 Fim Criação dos Procedimentos no SGBD                      --
 -- ------------------------------------------------------------------------------
