@@ -631,8 +631,8 @@ CREATE PROCEDURE atualiza_nota_fiscal ()
 BEGIN
     DECLARE var_Min, var_Max, var_Cont INT DEFAULT 0;
     DECLARE diaria, consumo NUMERIC(10 , 2 );   
-    SET var_Min = (select min(Num_nota_Fiscal) from conta);
-    SET var_Max = (select max(Num_nota_Fiscal) from conta);
+    SET var_Min = (SELECT min(Num_nota_Fiscal) FROM conta);
+    SET var_Max = (SELECT max(Num_nota_Fiscal) FROM conta);
     
     
     WHILE var_Min <= var_Max DO
@@ -640,14 +640,14 @@ BEGIN
 		SET consumo = 0;
     
     -- Diária
-select sum((tempoDeHospedagem(h.CPF) * valor_Apto)) into diaria
-from hospede h, apartamentos ap, reserva re, valordiariasaptos varD
-where varD.Cod_apartamento = ap.Cod_apartamento and
+SELECT sum((tempoDeHospedagem(h.CPF) * valor_Apto)) into diaria
+FROM hospede h, apartamentos ap, reserva re, valordiariasaptos varD
+WHERE varD.Cod_apartamento = ap.Cod_apartamento and
 re.CPF = h.CPF and re.Cod_apartamento = ap.Cod_apartamento and h.CPF = getCPF(var_Min)  group by Nome_hospede;
 	-- Consumo de ítens
-select sum(Preco) into consumo
-from hospede h, apartamentos ap, reserva re,  produtos pro, solicitacao_servico soli, ser_diversos ser
-where soli.CPF = re.CPF and soli.Cod_servico = ser.Cod_servico and soli.Cod_apartamento = ap.Cod_apartamento and
+SELECT sum(Preco) into consumo
+FROM hospede h, apartamentos ap, reserva re,  produtos pro, solicitacao_servico soli, ser_diversos ser
+WHERE soli.CPF = re.CPF and soli.Cod_servico = ser.Cod_servico and soli.Cod_apartamento = ap.Cod_apartamento and
 ser.Cod_produto = pro.Cod_produto and
 re.CPF = h.CPF and re.Cod_apartamento = ap.Cod_apartamento and h.CPF = getCPF(var_Min) group by Nome_hospede;
     
@@ -657,7 +657,7 @@ re.CPF = h.CPF and re.Cod_apartamento = ap.Cod_apartamento and h.CPF = getCPF(va
     SET var_Min = var_Min + 1;
     SET var_Cont = var_Cont + 1;
   END WHILE;
-    select concat('Valor das (', (var_Cont),') Notas Fiscais foram atualizadas.');
+    SELECT concat('Valor das (', (var_Cont),') Notas Fiscais foram atualizadas.');
 END $$
 DELIMITER ;
 
@@ -695,18 +695,18 @@ ser.Cod_produto = pro.Cod_produto and pro.Nome_produto = ', quote(varProduto));
 		SET @comando = CONCAT(@comando, @consulta);
 		PREPARE montar_view FROM @comando;
 		EXECUTE montar_view;
-		select concat('View: vw_', varProduto, ', criada com sucesso. (OK)');
+		SELECT concat('View: vw_', varProduto, ', criada com sucesso. (OK)');
         
         else
-			select concat('Produto: ', varProduto, ', não exite. (Erro)');
+			SELECT concat('Produto: ', varProduto, ', não exite. (Erro)');
     end if;
     
 END $$
 DELIMITER ;
 
 CALL criaViewProduto('Almoço');
-select * from vw_almoço;
-select * from produtos;
+SELECT * FROM vw_almoço;
+SELECT * FROM produtos;
 -- ------------------------------------------------------------------------------
 --                 Fim Criação dos Procedimentos no SGBD                      --
 -- ------------------------------------------------------------------------------
