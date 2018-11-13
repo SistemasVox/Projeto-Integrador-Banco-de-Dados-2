@@ -657,7 +657,7 @@ CALL atualiza_nota_fiscal();
 SELECT * FROM conta;
 UPDATE conta SET Valor_total = 0.00;
 
--- 2) Crie um Prodimento, que cria uma Viwer, essa Viwer criada lista os nomes dos hópedes que já consumiu o Produto,
+-- 2) Crie um Prodimento, que cria uma View, essa View criada lista os nomes dos hópedes que já consumiu o Produto,
 -- as colunas deve ser nome do hópede, tipo de apartamento que está hospedado,
 -- nome do produto e descrição do cliente que já consumiu o Produto.
 
