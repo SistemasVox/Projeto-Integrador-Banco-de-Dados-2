@@ -145,6 +145,15 @@ desc Conta;
 DROP TABLE Conta;
 --  ----------------  --
 
+CREATE TABLE Pagamento (
+    ID INT AUTO_INCREMENT,
+    pagamento VARCHAR(8) NOT NULL,
+    PRIMARY KEY (ID)
+);
+--     Manutenção     --
+desc Pagamento;
+DROP TABLE Pagamento;
+--  ----------------  --
 -- -----------------------------------------------------------------------------
 --                 FUNÇÕES PARA AJUDAR NO PREENCHIMENTO                      --
 -- -----------------------------------------------------------------------------
@@ -369,6 +378,15 @@ Values (5,'Bebida', 'Refrigerante', 5);
 INSERT INTO Ser_Diversos (Cod_servico, Tipo_servico, Desc_servico, Cod_produto)
 Values (6,'Bebida', 'Alcoólico', 6);
 /* ************************************************** */
+-- ---------------------------------------------------
+--                   Pagamento                     --
+-- ---------------------------------------------------
+
+INSERT INTO Pagamento (pagamento) values ('Dinheiro');
+INSERT INTO Pagamento (pagamento) values ('Débito');
+INSERT INTO Pagamento (pagamento) values ('Crédito');
+
+/* ************************************************** */
 
 -- ---------------------------------------------------
 --                     Conta                       --
@@ -575,15 +593,6 @@ savepoint inserindo_Marcelo;
 -- -------------------     
 SET autocommit = 1; -- 
 -- ------------------- 
-CREATE TABLE Pagamento (
-    ID INT AUTO_INCREMENT,
-    pagamento VARCHAR(8) NOT NULL,
-    PRIMARY KEY (ID)
-);
-INSERT INTO Pagamento (pagamento) values ('Dinheiro');
-INSERT INTO Pagamento (pagamento) values ('Débito');
-INSERT INTO Pagamento (pagamento) values ('Crédito');
-
 
 -- ------------------------------------------------------------------------
 --                   Criação dos Funções no SGBD                        --
