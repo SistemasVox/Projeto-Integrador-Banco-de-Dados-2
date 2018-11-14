@@ -139,6 +139,7 @@ CREATE TABLE Conta (
     PRIMARY KEY (Num_nota_Fiscal),
     FOREIGN KEY (CPF)
         REFERENCES Hospede (CPF)
+        ON DELETE CASCADE ON UPDATE CASCADE
 );
 --     Manutenção     --
 desc Conta;
@@ -717,7 +718,7 @@ CREATE TRIGGER verifica_Update BEFORE UPDATE
 ON conta FOR EACH ROW
 BEGIN
   IF(new.Data_pagamento < CURRENT_DATE())
-  THEN SET @MSG = concat('Erro 1212, data inferior a de hoje [ ', CURRENT_DATE,' ].');
+  THEN SET @MSG = concat('Erro 1212, data inferior a de hoje [ ', CURRENT_DATE,' ]. [', new.Data_pagamento, '] é menor.');
   signal SQLSTATE '45000' SET MESSAGE_TEXT = @MSG;
   END IF;
 END $
@@ -725,6 +726,32 @@ END $
 DELIMITER ;
 
 update conta SET Data_pagamento = current_date() - interval 3 day where Num_nota_Fiscal = 1;
+
+
+-- 4) Crie uma Trigguer que ao deletar um Hóspede salve seus dados na tabela Backup_Hospede.
+CREATE TABLE Backup_Hospede (
+    Nome_hospede VARCHAR(256) NOT NULL,
+    CPF VARCHAR(14) NOT NULL UNIQUE,
+    sexo ENUM('F', 'M'),
+    telCliente VARCHAR(15) NOT NULL,
+    Data_entrada DATE NOT NULL,
+    Data_saida DATE, 
+    Valor_total NUMERIC(10 , 2 ) 
+);
+
+DROP trigger IF EXISTS `Salva_Hospede`;
+DELIMITER $
+ 
+CREATE TRIGGER Salva_Hospede AFTER DELETE
+ON hospede FOR EACH ROW
+BEGIN
+	INSERT INTO hospede values (old.Nome_hospede, old.CPF, old.sexo, old.telCliente, old.Data_entrada, old.Data_saida, old.Valor_total);
+END $
+ 
+DELIMITER ;
+
+DELETE FROM hospede WHERE CPF = '375.407.454-79';
+
 -- ------------------------------------------------------------------------------
 --                 Fim Criação dos Procedimentos no SGBD                      --
 -- ------------------------------------------------------------------------------
