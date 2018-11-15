@@ -119,7 +119,8 @@ CREATE TABLE Solicitacao_Servico (
     Cod_servico INT NOT NULL,
     Cod_apartamento INT NOT NULL,
     FOREIGN KEY (CPF)
-        REFERENCES Hospede (CPF),
+        REFERENCES Hospede (CPF)
+        ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (Cod_Servico)
         REFERENCES Ser_Diversos (Cod_servico),
     FOREIGN KEY (Cod_apartamento)
@@ -240,6 +241,14 @@ BEGIN
 	SET  var_pagamento = (SELECT pagamento FROM Pagamento WHERE ID = var_id);
     
     RETURN (var_pagamento);
+END $
+DELIMITER ;
+
+-- H) Retornar Valor da Nota Fiscal 
+DELIMITER $
+CREATE FUNCTION valor_Nota(var_CPF varchar(14)) RETURNS int
+BEGIN   
+    RETURN (SELECT Valor_total FROM conta WHERE CPF = var_CPF);
 END $
 DELIMITER ;
 -- -----------------------------------------------------------------------------
@@ -742,15 +751,15 @@ CREATE TABLE Backup_Hospede (
 DROP trigger IF EXISTS `Salva_Hospede`;
 DELIMITER $
  
-CREATE TRIGGER Salva_Hospede AFTER DELETE
+CREATE TRIGGER Salva_Hospede BEFORE DELETE
 ON hospede FOR EACH ROW
 BEGIN
-	INSERT INTO hospede values (old.Nome_hospede, old.CPF, old.sexo, old.telCliente, old.Data_entrada, old.Data_saida, old.Valor_total);
+	INSERT INTO Backup_Hospede values (old.Nome_hospede, old.CPF, old.sexo, old.telCliente, old.Data_entrada, old.Data_saida, valor_Nota(old.CPF));
 END $
  
 DELIMITER ;
 
-DELETE FROM hospede WHERE CPF = '375.407.454-79';
+DELETE FROM hospede WHERE CPF = '313.236.527-01';
 
 -- ------------------------------------------------------------------------------
 --                 Fim Criação dos Procedimentos no SGBD                      --
