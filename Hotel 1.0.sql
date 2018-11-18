@@ -811,6 +811,42 @@ END $$
 DELIMITER ;
 
 CALL listaHospedesData("");
+
+-- 7) Crie um Trigguer que verifique se o valor sendo atualizado do apartamento é >= 149.90.
+DROP trigger IF EXISTS `verifica_Update_Ap`;
+DELIMITER $
+ 
+CREATE TRIGGER verifica_Update_Ap BEFORE UPDATE 
+ON valordiariasaptos FOR EACH ROW
+BEGIN
+  IF(new.valor_Apto < 149.90)
+  THEN SET @MSG = concat('Erro 1212, VALOR não pode ser inferior a R$ 149.90. [R$ ', new.valor_Apto, '] é menor.');
+  signal SQLSTATE '45000' SET MESSAGE_TEXT = @MSG;
+  END IF;
+END $
+ 
+DELIMITER ;
+
+UPDATE valordiariasaptos SET valor_Apto = 149.80;
+
+-- 8) Crie um Trigguer que verifique se o valor sendo adcionado apartamento é >= 149.90.
+DROP trigger IF EXISTS `verifica_Insert_Ap`;
+DELIMITER $
+ 
+CREATE TRIGGER verifica_Insert_Ap BEFORE INSERT 
+ON valordiariasaptos FOR EACH ROW
+BEGIN
+  IF(new.valor_Apto < 149.90)
+  THEN SET @MSG = concat('Erro 1212, VALOR não pode ser inferior a R$ 149.90. [R$ ', new.valor_Apto, '] é menor.');
+  signal SQLSTATE '45000' SET MESSAGE_TEXT = @MSG;
+  else INSERT INTO valorDiariasAptos (valor_Apto) VALUES (new.valor_Apto);
+  END IF;
+END $
+ 
+DELIMITER ;
+
+INSERT INTO valorDiariasAptos (Cod_apartamento, valor_Apto)
+Values (5, 99.90);
 -- ------------------------------------------------------------------------------
 --                 Fim Criação dos Procedimentos no SGBD                      --
 -- ------------------------------------------------------------------------------
