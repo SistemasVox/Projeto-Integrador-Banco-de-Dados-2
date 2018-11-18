@@ -185,6 +185,22 @@ BEGIN
     RETURN (SELECT Valor_total FROM conta WHERE CPF = var_CPF);
 END $
 DELIMITER ;
+
+-- I) Retornar uma Data entre 2018-10-01 a -30 Dias.
+DELIMITER $
+CREATE FUNCTION randData() RETURNS date
+BEGIN   
+    RETURN (SELECT '2018-10-01' + INTERVAL (FLOOR((RAND() * 30) + 1)) DAY);
+END $
+DELIMITER ;
+
+-- J) Retornar uma Data entre hoje a -30 Dias.
+DELIMITER $
+CREATE FUNCTION dataReserva(var_CPF varchar(14)) RETURNS date
+BEGIN   
+    RETURN (SELECT Data_entrada from hospede where CPF = var_CPF);
+END $
+DELIMITER ;
 -- -----------------------------------------------------------------------------
 --            FIM DAS FUNÇÕES PARA AJUDAR NO PREENCHIMENTO                   --
 -- -----------------------------------------------------------------------------
@@ -196,25 +212,25 @@ DELIMITER ;
 --                     HOSPEDE                     --
 -- ---------------------------------------------------
 INSERT INTO Hospede (Nome_hospede, CPF, Data_entrada, Data_saida, Sexo, telCliente, Num_nota_Fiscal)
-Values ('Carolina Martins Silva', '375.407.454-79', '2018-10-01', '2018-10-02','F', telefone(), numNotaFiscal());
+Values ('Carolina Martins Silva', '375.407.454-79', '2018-10-01', randData(),'F', telefone(), numNotaFiscal());
 INSERT INTO Hospede (Nome_hospede, CPF, Data_entrada, Data_saida, Sexo, telCliente, Num_nota_Fiscal)
-Values ('Kai Martins Ferreira', '849.525.773-41', '2018-10-01', '2018-10-05','M', telefone(), numNotaFiscal());
+Values ('Kai Martins Ferreira', '849.525.773-41', '2018-10-01', randData(),'M', telefone(), numNotaFiscal());
 INSERT INTO Hospede (Nome_hospede, CPF, Data_entrada, Data_saida, Sexo, telCliente, Num_nota_Fiscal)
-Values ('Aline Azevedo Souza', '122.184.355-94', '2018-10-01', '2018-10-10','F', telefone(), numNotaFiscal());
+Values ('Aline Azevedo Souza', '122.184.355-94', '2018-10-01', randData(),'F', telefone(), numNotaFiscal());
 INSERT INTO Hospede (Nome_hospede, CPF, Data_entrada, Data_saida, Sexo, telCliente, Num_nota_Fiscal)
-Values ('Giovanna Costa Cunha', '514.536.980-86', '2018-10-01', '2018-10-09','F', telefone(), numNotaFiscal());
+Values ('Giovanna Costa Cunha', '514.536.980-86', '2018-10-01', randData(),'F', telefone(), numNotaFiscal());
 INSERT INTO Hospede (Nome_hospede, CPF, Data_entrada, Data_saida, Sexo, telCliente, Num_nota_Fiscal)
-Values ('Isabella Pinto Sousa', '313.236.527-01', '2018-10-01', '2018-10-09','F', telefone(), numNotaFiscal());
+Values ('Isabella Pinto Sousa', '313.236.527-01', '2018-10-01', randData(),'F', telefone(), numNotaFiscal());
 INSERT INTO Hospede (Nome_hospede, CPF, Data_entrada, Data_saida, Sexo, telCliente, Num_nota_Fiscal)
-Values ('Estevan Barros Sousa', '926.148.594-43', '2018-10-03', '2018-10-31','M', telefone(), numNotaFiscal());
+Values ('Estevan Barros Sousa', '926.148.594-43', '2018-10-03', randData(),'M', telefone(), numNotaFiscal());
 INSERT INTO Hospede (Nome_hospede, CPF, Data_entrada, Data_saida, Sexo, telCliente, Num_nota_Fiscal)
-Values ('Carla Oliveira Ferreira', '363.071.433-12', '2018-10-01', '2018-10-25','F', telefone(), numNotaFiscal());
+Values ('Carla Oliveira Ferreira', '363.071.433-12', '2018-10-01', randData(),'F', telefone(), numNotaFiscal());
 INSERT INTO Hospede (Nome_hospede, CPF, Data_entrada, Data_saida, Sexo, telCliente, Num_nota_Fiscal)
-Values ('Douglas Cunha Rodrigues', '606.883.985-02', '2018-10-01', '2018-10-12','M', telefone(), numNotaFiscal());
+Values ('Douglas Cunha Rodrigues', '606.883.985-02', '2018-10-01', randData(),'M', telefone(), numNotaFiscal());
 INSERT INTO Hospede (Nome_hospede, CPF, Data_entrada, Data_saida, Sexo, telCliente, Num_nota_Fiscal)
-Values ('Nicolash Santos Oliveira', '651.304.169-45', '2018-10-01', '2018-10-7','M', telefone(), numNotaFiscal());
+Values ('Nicolash Santos Oliveira', '651.304.169-45', '2018-10-01', randData(),'M', telefone(), numNotaFiscal());
 INSERT INTO Hospede (Nome_hospede, CPF, Data_entrada, Data_saida, Sexo, telCliente, Num_nota_Fiscal)
-Values ('Paulo Castro Correia', '969.045.586-95', '2018-10-01', '2018-10-02','M', telefone(), numNotaFiscal());
+Values ('Paulo Castro Correia', '969.045.586-95', '2018-10-01', randData(),'M', telefone(), numNotaFiscal());
 /* *********************************************************************************** */
 
 -- ---------------------------------------------------
@@ -247,25 +263,25 @@ Values (4, 999.90);
 --                     RESERVA                     --
 -- ---------------------------------------------------
 INSERT INTO Reserva (Tempo_Hospedagem, Data_reserva, CPF, Cod_apartamento)
-VALUES(tempoDeHospedagem('375.407.454-79'), current_date(), '375.407.454-79', 1);
+VALUES(tempoDeHospedagem('375.407.454-79'), dataReserva('375.407.454-79'), '375.407.454-79', 1);
 INSERT INTO Reserva (Tempo_Hospedagem, Data_reserva, CPF, Cod_apartamento)
-VALUES(tempoDeHospedagem('849.525.773-41'), current_date(), '849.525.773-41', 2);
+VALUES(tempoDeHospedagem('849.525.773-41'), dataReserva('849.525.773-41'), '849.525.773-41', 2);
 INSERT INTO Reserva (Tempo_Hospedagem, Data_reserva, CPF, Cod_apartamento)
-VALUES(tempoDeHospedagem('122.184.355-94'), current_date(), '122.184.355-94', 3);
+VALUES(tempoDeHospedagem('122.184.355-94'), dataReserva('122.184.355-94'), '122.184.355-94', 3);
 INSERT INTO Reserva (Tempo_Hospedagem, Data_reserva, CPF, Cod_apartamento)
-VALUES(tempoDeHospedagem('514.536.980-86'), current_date(), '514.536.980-86', 4);
+VALUES(tempoDeHospedagem('514.536.980-86'), dataReserva('514.536.980-86'), '514.536.980-86', 4);
 INSERT INTO Reserva (Tempo_Hospedagem, Data_reserva, CPF, Cod_apartamento)
-VALUES(tempoDeHospedagem('313.236.527-01'), current_date(), '313.236.527-01', 4);
+VALUES(tempoDeHospedagem('313.236.527-01'), dataReserva('313.236.527-01'), '313.236.527-01', 4);
 INSERT INTO Reserva (Tempo_Hospedagem, Data_reserva, CPF, Cod_apartamento)
-VALUES(tempoDeHospedagem('926.148.594-43'), current_date(), '926.148.594-43', 1);
+VALUES(tempoDeHospedagem('926.148.594-43'), dataReserva('926.148.594-43'), '926.148.594-43', 1);
 INSERT INTO Reserva (Tempo_Hospedagem, Data_reserva, CPF, Cod_apartamento)
-VALUES(tempoDeHospedagem('363.071.433-12'), current_date(), '363.071.433-12', 3);
+VALUES(tempoDeHospedagem('363.071.433-12'), dataReserva('363.071.433-12'), '363.071.433-12', 3);
 INSERT INTO Reserva (Tempo_Hospedagem, Data_reserva, CPF, Cod_apartamento)
-VALUES(tempoDeHospedagem('606.883.985-02'), current_date(), '606.883.985-02', 2);
+VALUES(tempoDeHospedagem('606.883.985-02'), dataReserva('606.883.985-02'), '606.883.985-02', 2);
 INSERT INTO Reserva (Tempo_Hospedagem, Data_reserva, CPF, Cod_apartamento)
-VALUES(tempoDeHospedagem('651.304.169-45'), current_date(), '651.304.169-45', 2);
+VALUES(tempoDeHospedagem('651.304.169-45'), dataReserva('651.304.169-45'), '651.304.169-45', 2);
 INSERT INTO Reserva (Tempo_Hospedagem, Data_reserva, CPF, Cod_apartamento)
-VALUES(tempoDeHospedagem('969.045.586-95'), current_date(), '969.045.586-95', 1);
+VALUES(tempoDeHospedagem('969.045.586-95'), dataReserva('969.045.586-95'), '969.045.586-95', 1);
 -- ----------------------------- --
 /* ************************************************** */
 
