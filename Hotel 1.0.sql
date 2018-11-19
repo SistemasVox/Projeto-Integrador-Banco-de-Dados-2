@@ -853,27 +853,15 @@ CREATE TABLE contador_de_Produto (
     Cod_produto INT NOT NULL,
     Nome_produto VARCHAR(25) NOT NULL,
     Desc_produto VARCHAR(100) NOT NULL,
-    QTD INT default 0
+    QTD INT
 );
 DROP trigger IF EXISTS `contador_de_Produto`;
 DELIMITER $
  
-CREATE TRIGGER contador_de_Produto BEFORE DELETE 
+CREATE TRIGGER contador_de_Produto after DELETE 
 ON Solicitacao_Servico FOR EACH ROW
 BEGIN
-	DECLARE result, var_Cod_produto INT DEFAULT 0;
-    DECLARE var_Nome_produto VARCHAR(25);
-    DECLARE var_Desc_produto VARCHAR(100);
-    
-    select count(cp.Cod_produto) from contador_de_Produto cp where cp.Cod_produto = (SELECT DISTINCT p.Cod_produto from Ser_Diversos sd, Solicitacao_Servico ss, produtos p where ss.Cod_servico = sd.Cod_servico and sd.Cod_produto = p.Cod_produto and sd.Cod_servico = old.Cod_servico) into result;
-    SET var_Nome_produto = (SELECT DISTINCT p.Nome_produto from Ser_Diversos sd, Solicitacao_Servico ss, produtos p where ss.Cod_servico = sd.Cod_servico and sd.Cod_produto = p.Cod_produto and sd.Cod_servico = old.Cod_servico);
-    SET var_Desc_produto = (SELECT DISTINCT p.Desc_produto from Ser_Diversos sd, Solicitacao_Servico ss, produtos p where ss.Cod_servico = sd.Cod_servico and sd.Cod_produto = p.Cod_produto and sd.Cod_servico = old.Cod_servico);
-    SET var_Cod_produto = (SELECT DISTINCT p.Cod_produto from Ser_Diversos sd, Solicitacao_Servico ss, produtos p where ss.Cod_servico = sd.Cod_servico and sd.Cod_produto = p.Cod_produto and sd.Cod_servico = old.Cod_servico);
-  IF(result != 0) then
-	UPDATE contador_de_Produto SET QTD = (result + 1) where Cod_produto = var_Cod_produto;
-		ELSE
-        INSERT INTO contador_de_Produto values (var_Cod_produto, var_Nome_produto, var_Desc_produto, 0);
-  END IF;
+	CALL AtualizaQTDProd(old.Cod_servico);
 END $
  
 DELIMITER ;
@@ -881,6 +869,32 @@ DELETE FROM hospede where CPF = '375.407.454-79';
 SELECT * FROM hotel.solicitacao_servico;
 SELECT * FROM hotel.contador_de_Produto;
 
+
+USE `Hotel`;
+DROP procedure IF EXISTS `AtualizaQTDProd`;
+DELIMITER $$
+CREATE PROCEDURE AtualizaQTDProd (old_Cod_servico int)
+BEGIN
+	DECLARE result, var_Cod_produto, var_QTD INT;
+    DECLARE var_Nome_produto VARCHAR(25);
+    DECLARE var_Desc_produto VARCHAR(100);
+    
+    select count(*) from contador_de_Produto cp where cp.Cod_produto = (SELECT DISTINCT p.Cod_produto from Ser_Diversos sd, Solicitacao_Servico ss, produtos p where ss.Cod_servico = sd.Cod_servico and sd.Cod_produto = p.Cod_produto and sd.Cod_servico = old_Cod_servico) into result;
+    SET var_Nome_produto = (SELECT DISTINCT p.Nome_produto from Ser_Diversos sd, Solicitacao_Servico ss, produtos p where ss.Cod_servico = sd.Cod_servico and sd.Cod_produto = p.Cod_produto and sd.Cod_servico = old_Cod_servico);
+    SET var_Desc_produto = (SELECT DISTINCT p.Desc_produto from Ser_Diversos sd, Solicitacao_Servico ss, produtos p where ss.Cod_servico = sd.Cod_servico and sd.Cod_produto = p.Cod_produto and sd.Cod_servico = old_Cod_servico);
+    SET var_Cod_produto = (SELECT DISTINCT p.Cod_produto from Ser_Diversos sd, Solicitacao_Servico ss, produtos p where ss.Cod_servico = sd.Cod_servico and sd.Cod_produto = p.Cod_produto and sd.Cod_servico = old_Cod_servico);
+  IF(result > 0) then
+	SET var_QTD = (select QTD from contador_de_produto where Cod_produto = var_Cod_produto);
+	UPDATE contador_de_Produto SET QTD = (var_QTD + 1) where Cod_produto = var_Cod_produto;
+		ELSE
+        INSERT INTO contador_de_Produto values (var_Cod_produto, var_Nome_produto, var_Desc_produto, 1);
+  END IF;
+END $$
+DELIMITER ;
+
+CALL AtualizaQTDProd(6);
+SELECT * FROM hotel.contador_de_Produto;
+truncate hotel.contador_de_Produto;
 -- ------------------------------------------------------------------------------
 --                 Fim Criação dos Procedimentos no SGBD                      --
 -- ------------------------------------------------------------------------------
