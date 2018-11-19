@@ -66,7 +66,7 @@ CREATE TABLE Solicitacao_Servico (
     Cod_apartamento INT NOT NULL,
     FOREIGN KEY (CPF)
         REFERENCES Hospede (CPF)
-        ON DELETE CASCADE ON UPDATE CASCADE,
+        ON DELETE CASCADE,
     FOREIGN KEY (Cod_Servico)
         REFERENCES Ser_Diversos (Cod_servico),
     FOREIGN KEY (Cod_apartamento)
