@@ -858,7 +858,7 @@ CREATE TABLE contador_de_Produto (
 DROP trigger IF EXISTS `contador_de_Produto`;
 DELIMITER $
  
-CREATE TRIGGER contador_de_Produto after DELETE 
+CREATE TRIGGER contador_de_Produto BEFORE DELETE 
 ON Solicitacao_Servico FOR EACH ROW
 BEGIN
 	CALL AtualizaQTDProd(old.Cod_servico);
