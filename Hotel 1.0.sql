@@ -876,19 +876,19 @@ DELIMITER $$
 CREATE PROCEDURE AtualizaQTDProd (old_Cod_servico int)
 BEGIN
 	DECLARE result, var_Cod_produto, var_QTD INT;
-    DECLARE var_Nome_produto VARCHAR(25);
-    DECLARE var_Desc_produto VARCHAR(100);
+	DECLARE var_Nome_produto VARCHAR(25);
+	DECLARE var_Desc_produto VARCHAR(100);
     
-    select count(*) from contador_de_Produto cp where cp.Cod_produto = (SELECT DISTINCT p.Cod_produto from Ser_Diversos sd, Solicitacao_Servico ss, produtos p where ss.Cod_servico = sd.Cod_servico and sd.Cod_produto = p.Cod_produto and sd.Cod_servico = old_Cod_servico) into result;
-    SET var_Nome_produto = (SELECT DISTINCT p.Nome_produto from Ser_Diversos sd, Solicitacao_Servico ss, produtos p where ss.Cod_servico = sd.Cod_servico and sd.Cod_produto = p.Cod_produto and sd.Cod_servico = old_Cod_servico);
-    SET var_Desc_produto = (SELECT DISTINCT p.Desc_produto from Ser_Diversos sd, Solicitacao_Servico ss, produtos p where ss.Cod_servico = sd.Cod_servico and sd.Cod_produto = p.Cod_produto and sd.Cod_servico = old_Cod_servico);
-    SET var_Cod_produto = (SELECT DISTINCT p.Cod_produto from Ser_Diversos sd, Solicitacao_Servico ss, produtos p where ss.Cod_servico = sd.Cod_servico and sd.Cod_produto = p.Cod_produto and sd.Cod_servico = old_Cod_servico);
-  IF(result > 0) then
-	SET var_QTD = (select QTD from contador_de_produto where Cod_produto = var_Cod_produto);
-	UPDATE contador_de_Produto SET QTD = (var_QTD + 1) where Cod_produto = var_Cod_produto;
+	select count(*) from contador_de_Produto cp where cp.Cod_produto = (SELECT DISTINCT p.Cod_produto from Ser_Diversos sd, Solicitacao_Servico ss, produtos p where ss.Cod_servico = sd.Cod_servico and sd.Cod_produto = p.Cod_produto and sd.Cod_servico = old_Cod_servico) into result;
+	SET var_Nome_produto = (SELECT DISTINCT p.Nome_produto from Ser_Diversos sd, Solicitacao_Servico ss, produtos p where ss.Cod_servico = sd.Cod_servico and sd.Cod_produto = p.Cod_produto and sd.Cod_servico = old_Cod_servico);
+	SET var_Desc_produto = (SELECT DISTINCT p.Desc_produto from Ser_Diversos sd, Solicitacao_Servico ss, produtos p where ss.Cod_servico = sd.Cod_servico and sd.Cod_produto = p.Cod_produto and sd.Cod_servico = old_Cod_servico);
+	SET var_Cod_produto = (SELECT DISTINCT p.Cod_produto from Ser_Diversos sd, Solicitacao_Servico ss, produtos p where ss.Cod_servico = sd.Cod_servico and sd.Cod_produto = p.Cod_produto and sd.Cod_servico = old_Cod_servico);
+		IF(result > 0) then
+			SET var_QTD = (select QTD from contador_de_produto where Cod_produto = var_Cod_produto);
+			UPDATE contador_de_Produto SET QTD = (var_QTD + 1) where Cod_produto = var_Cod_produto;
 		ELSE
-        INSERT INTO contador_de_Produto values (var_Cod_produto, var_Nome_produto, var_Desc_produto, 1);
-  END IF;
+			INSERT INTO contador_de_Produto values (var_Cod_produto, var_Nome_produto, var_Desc_produto, 1);
+		END IF;
 END $$
 DELIMITER ;
 
