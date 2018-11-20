@@ -879,7 +879,7 @@ BEGIN
 	DECLARE var_Nome_produto VARCHAR(25);
 	DECLARE var_Desc_produto VARCHAR(100);
     
-	select count(*) from contador_de_Produto cp where cp.Cod_produto = (SELECT DISTINCT p.Cod_produto from Ser_Diversos sd, Solicitacao_Servico ss, produtos p where ss.Cod_servico = sd.Cod_servico and sd.Cod_produto = p.Cod_produto and sd.Cod_servico = old_Cod_servico) into result;
+	select count(*) into result  from contador_de_Produto cp where cp.Cod_produto = (SELECT DISTINCT p.Cod_produto from Ser_Diversos sd, Solicitacao_Servico ss, produtos p where ss.Cod_servico = sd.Cod_servico and sd.Cod_produto = p.Cod_produto and sd.Cod_servico = old_Cod_servico);
 	SET var_Nome_produto = (SELECT DISTINCT p.Nome_produto from Ser_Diversos sd, Solicitacao_Servico ss, produtos p where ss.Cod_servico = sd.Cod_servico and sd.Cod_produto = p.Cod_produto and sd.Cod_servico = old_Cod_servico);
 	SET var_Desc_produto = (SELECT DISTINCT p.Desc_produto from Ser_Diversos sd, Solicitacao_Servico ss, produtos p where ss.Cod_servico = sd.Cod_servico and sd.Cod_produto = p.Cod_produto and sd.Cod_servico = old_Cod_servico);
 	SET var_Cod_produto = (SELECT DISTINCT p.Cod_produto from Ser_Diversos sd, Solicitacao_Servico ss, produtos p where ss.Cod_servico = sd.Cod_servico and sd.Cod_produto = p.Cod_produto and sd.Cod_servico = old_Cod_servico);
