@@ -1,4 +1,4 @@
-DROP database Hotel;
+DROP database IF EXISTS `Hotel`;
 CREATE database Hotel;
 USE Hotel;
 
