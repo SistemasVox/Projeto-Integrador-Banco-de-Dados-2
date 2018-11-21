@@ -164,7 +164,7 @@ DELIMITER $
 CREATE FUNCTION telefone() RETURNS VARCHAR(15)
 BEGIN
 	DECLARE telCliente VARCHAR(15);
-	set telCliente = CONCAT ( '(', inteiro(), inteiro(), ') 9', inteiro() , inteiro(), inteiro(), inteiro(),
+	SET telCliente = CONCAT ( '(', inteiro(), inteiro(), ') 9', inteiro() , inteiro(), inteiro(), inteiro(),
     '-' , inteiro(), inteiro(), inteiro(), inteiro());
     
     RETURN telCliente;
@@ -185,9 +185,9 @@ DELIMITER $
 CREATE FUNCTION numNotaFiscal() RETURNS int
 BEGIN
 	DECLARE ultimoNum INT DEFAULT 0;
-    select max(Num_nota_Fiscal) from hospede into ultimoNum;
+    SELECT max(Num_nota_Fiscal) from hospede into ultimoNum;
     
-    if(ultimoNum IS NULL) THEN
+    IF(ultimoNum IS NULL) THEN
     SET ultimoNum = 0;
     END IF;  
     RETURN (ultimoNum + 1);
@@ -199,8 +199,8 @@ DELIMITER $
 CREATE FUNCTION tempoDeHospedagem(var_CPF varchar(14)) RETURNS int
 BEGIN
 	DECLARE tempoHosp INT DEFAULT 0;
-    select DATEDIFF(Data_saida, Data_entrada) FROM hospede WHERE CPF = var_CPF into tempoHosp;    
-    if(tempoHosp IS NULL) THEN
+    SELECT DATEDIFF(Data_saida, Data_entrada) FROM hospede WHERE CPF = var_CPF into tempoHosp;    
+    IF(tempoHosp IS NULL) THEN
     SET tempoHosp = 0;
     END IF;  
     RETURN (tempoHosp);
@@ -218,7 +218,7 @@ BEGIN
 END $
 DELIMITER ;
 
--- F) Calcular Valor da Nota Fiscal 
+-- F) Calcular Valor da Nota Fiscal (RANDOMICO)
 DELIMITER $
 CREATE FUNCTION valorTotal(var_CPF varchar(14)) RETURNS int
 BEGIN
@@ -228,7 +228,7 @@ BEGIN
 END $
 DELIMITER ;
 
--- G) Gerar Tipo de Pagamento da Nota Fiscal 
+-- G) Gerar Tipo de Pagamento da Nota Fiscal (RANDOMICO)
 DELIMITER $
 CREATE FUNCTION f_pagamento() RETURNS VARCHAR(8)
 BEGIN
@@ -260,7 +260,7 @@ BEGIN
 END $
 DELIMITER ;
 
--- J) Retornar uma Data entre hoje a -30 Dias.
+-- J) Retornar a Data da Reserva.
 DELIMITER $
 CREATE FUNCTION dataReserva(var_CPF varchar(14)) RETURNS date
 BEGIN   
@@ -621,7 +621,7 @@ SET autocommit = 1; --
 -- ------------------- 
 
 -- ------------------------------------------------------------------------
---                   Criação dos Funções no SGBD                        --
+--                   Criação das Funções no SGBD                        --
 -- ------------------------------------------------------------------------
 DROP FUNCTION IF EXISTS `getCPF`;
 DELIMITER $
@@ -631,7 +631,7 @@ BEGIN
 END $
 DELIMITER ;
 -- ------------------------------------------------------------------------
---                Fim Criação dos Funções no SGBD                       --
+--                Fim Criação das Funções no SGBD                       --
 -- ------------------------------------------------------------------------
 
 -- ------------------------------------------------------------------------------
@@ -734,7 +734,7 @@ CALL criaViewProduto('Almoço');
 SELECT * FROM vw_almoço;
 SELECT * FROM produtos;
 
--- 3) Crie uma Trigguer que verifique se a data da emissão da nota fiscal, não seja menor
+-- 3) Crie um Trigguer que verifique se a data da emissão da nota fiscal, não seja menor
 -- que a data corrente do dia.
 DROP trigger IF EXISTS `verifica_Update`;
 DELIMITER $
@@ -753,7 +753,7 @@ DELIMITER ;
 update conta SET Data_pagamento = current_date() - interval 3 day where Num_nota_Fiscal = 1;
 
 
--- 4) Crie uma Trigguer que ao deletar um Hóspede salve seus dados na tabela Backup_Hospede.
+-- 4) Crie um Trigguer que ao deletar um Hóspede salve seus dados na tabela Backup_Hospede.
 CREATE TABLE Backup_Hospede (
     Nome_hospede VARCHAR(256) NOT NULL,
     CPF VARCHAR(14) NOT NULL UNIQUE,
