@@ -201,7 +201,7 @@ BEGIN
     RETURN (SELECT Data_entrada from hospede where CPF = var_CPF);
 END $
 DELIMITER ;
--- K) TEMPO DE HOSPEDAGEM.
+-- K) CONSUMO ALEATÓRIO.
 DELIMITER $
 CREATE FUNCTION randDataConsumo(var_CPF varchar(14)) RETURNS date
 BEGIN
