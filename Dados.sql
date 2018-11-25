@@ -201,6 +201,19 @@ BEGIN
     RETURN (SELECT Data_entrada from hospede where CPF = var_CPF);
 END $
 DELIMITER ;
+-- K) TEMPO DE HOSPEDAGEM.
+DELIMITER $
+CREATE FUNCTION randDataConsumo(var_CPF varchar(14)) RETURNS date
+BEGIN
+	DECLARE tempoHosp INT DEFAULT 0;
+    DECLARE var_Data DATE;
+    
+    SELECT DATEDIFF(Data_saida, Data_entrada) FROM hospede WHERE CPF = var_CPF into tempoHosp;     
+    SELECT Data_entrada FROM hospede WHERE CPF = var_CPF into var_Data;
+    
+    RETURN (var_Data + INTERVAL (FLOOR((RAND() * tempoHosp))) DAY);
+END $
+DELIMITER ;
 -- -----------------------------------------------------------------------------
 --            FIM DAS FUNÇÕES PARA AJUDAR NO PREENCHIMENTO                   --
 -- -----------------------------------------------------------------------------
@@ -356,36 +369,37 @@ Values ('969.045.586-95',  current_date(), F_PAGAMENTO(), valorTotal('969.045.58
 -- ---------------------------------------------------
 -- Carolina Martins Silva Quarto Casal
 INSERT INTO Solicitacao_Servico (data_Solicitacao, CPF, Cod_servico, Cod_apartamento)
-Values (current_date(), '375.407.454-79', 1, codigoDoApartamentoDoHospede('375.407.454-79'));
+Values (randDataConsumo('375.407.454-79'), '375.407.454-79', 1, codigoDoApartamentoDoHospede('375.407.454-79'));
 INSERT INTO Solicitacao_Servico (data_Solicitacao, CPF, Cod_servico, Cod_apartamento)
-Values (current_date(), '375.407.454-79', 2, codigoDoApartamentoDoHospede('375.407.454-79'));
+Values (randDataConsumo('375.407.454-79'), '375.407.454-79', 2, codigoDoApartamentoDoHospede('375.407.454-79'));
 INSERT INTO Solicitacao_Servico (data_Solicitacao, CPF, Cod_servico, Cod_apartamento)
-Values (current_date(), '375.407.454-79', 3, codigoDoApartamentoDoHospede('375.407.454-79'));
+Values (randDataConsumo('375.407.454-79'), '375.407.454-79', 3, codigoDoApartamentoDoHospede('375.407.454-79'));
 INSERT INTO Solicitacao_Servico (data_Solicitacao, CPF, Cod_servico, Cod_apartamento)
-Values (current_date(), '375.407.454-79', 4, codigoDoApartamentoDoHospede('375.407.454-79'));
+Values (randDataConsumo('375.407.454-79'), '375.407.454-79', 4, codigoDoApartamentoDoHospede('375.407.454-79'));
 INSERT INTO Solicitacao_Servico (data_Solicitacao, CPF, Cod_servico, Cod_apartamento)
-Values (current_date(), '375.407.454-79', 5, codigoDoApartamentoDoHospede('375.407.454-79'));
+Values (randDataConsumo('375.407.454-79'), '375.407.454-79', 5, codigoDoApartamentoDoHospede('375.407.454-79'));
 INSERT INTO Solicitacao_Servico (data_Solicitacao, CPF, Cod_servico, Cod_apartamento)
-Values (current_date(), '375.407.454-79', 6, codigoDoApartamentoDoHospede('375.407.454-79'));
+Values (randDataConsumo('375.407.454-79'), '375.407.454-79', 6, codigoDoApartamentoDoHospede('375.407.454-79'));
 -- Kai Martins Ferreira Quarto Solteiro
 INSERT INTO Solicitacao_Servico (data_Solicitacao, CPF, Cod_servico, Cod_apartamento)
-Values (current_date(), '849.525.773-41', 1, codigoDoApartamentoDoHospede('849.525.773-41'));
+Values (randDataConsumo('849.525.773-41'), '849.525.773-41', 1, codigoDoApartamentoDoHospede('849.525.773-41'));
 INSERT INTO Solicitacao_Servico (data_Solicitacao, CPF, Cod_servico, Cod_apartamento)
-Values (current_date(), '849.525.773-41', 4, codigoDoApartamentoDoHospede('849.525.773-41'));
+Values (randDataConsumo('849.525.773-41'), '849.525.773-41', 4, codigoDoApartamentoDoHospede('849.525.773-41'));
 -- Estevan Barros Sousa Quarto Casal
 INSERT INTO Solicitacao_Servico (data_Solicitacao, CPF, Cod_servico, Cod_apartamento)
-Values (current_date(), '926.148.594-43', 1, codigoDoApartamentoDoHospede('926.148.594-43'));
+Values (randDataConsumo('926.148.594-43'), '926.148.594-43', 1, codigoDoApartamentoDoHospede('926.148.594-43'));
 INSERT INTO Solicitacao_Servico (data_Solicitacao, CPF, Cod_servico, Cod_apartamento)
-Values (current_date(), '926.148.594-43', 6, codigoDoApartamentoDoHospede('926.148.594-43'));
+Values (randDataConsumo('926.148.594-43'), '926.148.594-43', 6, codigoDoApartamentoDoHospede('926.148.594-43'));
 -- Aline Azevedo Souza Quarto Suite
 INSERT INTO Solicitacao_Servico (data_Solicitacao, CPF, Cod_servico, Cod_apartamento)
-Values (current_date(), '122.184.355-94', 4, codigoDoApartamentoDoHospede('122.184.355-94'));
+Values (randDataConsumo('122.184.355-94'), '122.184.355-94', 4, codigoDoApartamentoDoHospede('122.184.355-94'));
 INSERT INTO Solicitacao_Servico (data_Solicitacao, CPF, Cod_servico, Cod_apartamento)
-Values (current_date(), '122.184.355-94', 6, codigoDoApartamentoDoHospede('122.184.355-94'));
+Values (randDataConsumo('122.184.355-94'), '122.184.355-94', 6, codigoDoApartamentoDoHospede('122.184.355-94'));
 -- Giovanna Costa Cunha Quarto Presidencial
 INSERT INTO Solicitacao_Servico (data_Solicitacao, CPF, Cod_servico, Cod_apartamento)
-Values (current_date(), '514.536.980-86', 1, codigoDoApartamentoDoHospede('514.536.980-86'));
+Values (randDataConsumo('514.536.980-86'), '514.536.980-86', 1, codigoDoApartamentoDoHospede('514.536.980-86'));
 INSERT INTO Solicitacao_Servico (data_Solicitacao, CPF, Cod_servico, Cod_apartamento)
-Values (current_date(), '514.536.980-86', 2, codigoDoApartamentoDoHospede('514.536.980-86'));
+Values (randDataConsumo('514.536.980-86'), '514.536.980-86', 2, codigoDoApartamentoDoHospede('514.536.980-86'));
 INSERT INTO Solicitacao_Servico (data_Solicitacao, CPF, Cod_servico, Cod_apartamento)
-Values (current_date(), '514.536.980-86', 6, codigoDoApartamentoDoHospede('514.536.980-86'));
+Values (randDataConsumo('514.536.980-86'), '514.536.980-86', 6, codigoDoApartamentoDoHospede('514.536.980-86'));
+/* ************************************************** */

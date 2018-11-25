@@ -267,6 +267,20 @@ BEGIN
     RETURN (SELECT Data_entrada from hospede where CPF = var_CPF);
 END $
 DELIMITER ;
+
+-- K) TEMPO DE HOSPEDAGEM.
+DELIMITER $
+CREATE FUNCTION randDataConsumo(var_CPF varchar(14)) RETURNS date
+BEGIN
+	DECLARE tempoHosp INT DEFAULT 0;
+    DECLARE var_Data DATE;
+    
+    SELECT DATEDIFF(Data_saida, Data_entrada) FROM hospede WHERE CPF = var_CPF into tempoHosp;     
+    SELECT Data_entrada FROM hospede WHERE CPF = var_CPF into var_Data;
+    
+    RETURN (var_Data + INTERVAL (FLOOR((RAND() * tempoHosp))) DAY);
+END $
+DELIMITER ;
 -- -----------------------------------------------------------------------------
 --            FIM DAS FUNÇÕES PARA AJUDAR NO PREENCHIMENTO                   --
 -- -----------------------------------------------------------------------------
@@ -458,39 +472,39 @@ TRUNCATE TABLE Solicitacao_Servico; -- Apagar todas as linhas da tabela.
 
 -- Carolina Martins Silva Quarto Casal
 INSERT INTO Solicitacao_Servico (data_Solicitacao, CPF, Cod_servico, Cod_apartamento)
-Values (current_date(), '375.407.454-79', 1, codigoDoApartamentoDoHospede('375.407.454-79'));
+Values (randDataConsumo('375.407.454-79'), '375.407.454-79', 1, codigoDoApartamentoDoHospede('375.407.454-79'));
 INSERT INTO Solicitacao_Servico (data_Solicitacao, CPF, Cod_servico, Cod_apartamento)
-Values (current_date(), '375.407.454-79', 2, codigoDoApartamentoDoHospede('375.407.454-79'));
+Values (randDataConsumo('375.407.454-79'), '375.407.454-79', 2, codigoDoApartamentoDoHospede('375.407.454-79'));
 INSERT INTO Solicitacao_Servico (data_Solicitacao, CPF, Cod_servico, Cod_apartamento)
-Values (current_date(), '375.407.454-79', 3, codigoDoApartamentoDoHospede('375.407.454-79'));
+Values (randDataConsumo('375.407.454-79'), '375.407.454-79', 3, codigoDoApartamentoDoHospede('375.407.454-79'));
 INSERT INTO Solicitacao_Servico (data_Solicitacao, CPF, Cod_servico, Cod_apartamento)
-Values (current_date(), '375.407.454-79', 4, codigoDoApartamentoDoHospede('375.407.454-79'));
+Values (randDataConsumo('375.407.454-79'), '375.407.454-79', 4, codigoDoApartamentoDoHospede('375.407.454-79'));
 INSERT INTO Solicitacao_Servico (data_Solicitacao, CPF, Cod_servico, Cod_apartamento)
-Values (current_date(), '375.407.454-79', 5, codigoDoApartamentoDoHospede('375.407.454-79'));
+Values (randDataConsumo('375.407.454-79'), '375.407.454-79', 5, codigoDoApartamentoDoHospede('375.407.454-79'));
 INSERT INTO Solicitacao_Servico (data_Solicitacao, CPF, Cod_servico, Cod_apartamento)
-Values (current_date(), '375.407.454-79', 6, codigoDoApartamentoDoHospede('375.407.454-79'));
+Values (randDataConsumo('375.407.454-79'), '375.407.454-79', 6, codigoDoApartamentoDoHospede('375.407.454-79'));
 -- Kai Martins Ferreira Quarto Solteiro
 INSERT INTO Solicitacao_Servico (data_Solicitacao, CPF, Cod_servico, Cod_apartamento)
-Values (current_date(), '849.525.773-41', 1, codigoDoApartamentoDoHospede('849.525.773-41'));
+Values (randDataConsumo('849.525.773-41'), '849.525.773-41', 1, codigoDoApartamentoDoHospede('849.525.773-41'));
 INSERT INTO Solicitacao_Servico (data_Solicitacao, CPF, Cod_servico, Cod_apartamento)
-Values (current_date(), '849.525.773-41', 4, codigoDoApartamentoDoHospede('849.525.773-41'));
+Values (randDataConsumo('849.525.773-41'), '849.525.773-41', 4, codigoDoApartamentoDoHospede('849.525.773-41'));
 -- Estevan Barros Sousa Quarto Casal
 INSERT INTO Solicitacao_Servico (data_Solicitacao, CPF, Cod_servico, Cod_apartamento)
-Values (current_date(), '926.148.594-43', 1, codigoDoApartamentoDoHospede('926.148.594-43'));
+Values (randDataConsumo('926.148.594-43'), '926.148.594-43', 1, codigoDoApartamentoDoHospede('926.148.594-43'));
 INSERT INTO Solicitacao_Servico (data_Solicitacao, CPF, Cod_servico, Cod_apartamento)
-Values (current_date(), '926.148.594-43', 6, codigoDoApartamentoDoHospede('926.148.594-43'));
+Values (randDataConsumo('926.148.594-43'), '926.148.594-43', 6, codigoDoApartamentoDoHospede('926.148.594-43'));
 -- Aline Azevedo Souza Quarto Suite
 INSERT INTO Solicitacao_Servico (data_Solicitacao, CPF, Cod_servico, Cod_apartamento)
-Values (current_date(), '122.184.355-94', 4, codigoDoApartamentoDoHospede('122.184.355-94'));
+Values (randDataConsumo('122.184.355-94'), '122.184.355-94', 4, codigoDoApartamentoDoHospede('122.184.355-94'));
 INSERT INTO Solicitacao_Servico (data_Solicitacao, CPF, Cod_servico, Cod_apartamento)
-Values (current_date(), '122.184.355-94', 6, codigoDoApartamentoDoHospede('122.184.355-94'));
+Values (randDataConsumo('122.184.355-94'), '122.184.355-94', 6, codigoDoApartamentoDoHospede('122.184.355-94'));
 -- Giovanna Costa Cunha Quarto Presidencial
 INSERT INTO Solicitacao_Servico (data_Solicitacao, CPF, Cod_servico, Cod_apartamento)
-Values (current_date(), '514.536.980-86', 1, codigoDoApartamentoDoHospede('514.536.980-86'));
+Values (randDataConsumo('514.536.980-86'), '514.536.980-86', 1, codigoDoApartamentoDoHospede('514.536.980-86'));
 INSERT INTO Solicitacao_Servico (data_Solicitacao, CPF, Cod_servico, Cod_apartamento)
-Values (current_date(), '514.536.980-86', 2, codigoDoApartamentoDoHospede('514.536.980-86'));
+Values (randDataConsumo('514.536.980-86'), '514.536.980-86', 2, codigoDoApartamentoDoHospede('514.536.980-86'));
 INSERT INTO Solicitacao_Servico (data_Solicitacao, CPF, Cod_servico, Cod_apartamento)
-Values (current_date(), '514.536.980-86', 6, codigoDoApartamentoDoHospede('514.536.980-86'));
+Values (randDataConsumo('514.536.980-86'), '514.536.980-86', 6, codigoDoApartamentoDoHospede('514.536.980-86'));
 /* ************************************************** */
 
 -- -----------------------------------------------------------------------------
@@ -879,7 +893,7 @@ BEGIN
 	DECLARE var_Nome_produto VARCHAR(25);
 	DECLARE var_Desc_produto VARCHAR(100);
     
-	select count(*) into result  from contador_de_Produto cp where cp.Cod_produto = (SELECT DISTINCT p.Cod_produto from Ser_Diversos sd, Solicitacao_Servico ss, produtos p where ss.Cod_servico = sd.Cod_servico and sd.Cod_produto = p.Cod_produto and sd.Cod_servico = old_Cod_servico);
+	SELECT COUNT(*) into result FROM contador_de_Produto cp where cp.Cod_produto = (SELECT DISTINCT p.Cod_produto from Ser_Diversos sd, Solicitacao_Servico ss, produtos p where ss.Cod_servico = sd.Cod_servico and sd.Cod_produto = p.Cod_produto and sd.Cod_servico = old_Cod_servico);
 	SET var_Nome_produto = (SELECT DISTINCT p.Nome_produto from Ser_Diversos sd, Solicitacao_Servico ss, produtos p where ss.Cod_servico = sd.Cod_servico and sd.Cod_produto = p.Cod_produto and sd.Cod_servico = old_Cod_servico);
 	SET var_Desc_produto = (SELECT DISTINCT p.Desc_produto from Ser_Diversos sd, Solicitacao_Servico ss, produtos p where ss.Cod_servico = sd.Cod_servico and sd.Cod_produto = p.Cod_produto and sd.Cod_servico = old_Cod_servico);
 	SET var_Cod_produto = (SELECT DISTINCT p.Cod_produto from Ser_Diversos sd, Solicitacao_Servico ss, produtos p where ss.Cod_servico = sd.Cod_servico and sd.Cod_produto = p.Cod_produto and sd.Cod_servico = old_Cod_servico);
