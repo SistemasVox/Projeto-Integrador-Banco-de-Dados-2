@@ -785,6 +785,7 @@ CREATE TRIGGER Salva_Hospede BEFORE DELETE
 ON hospede FOR EACH ROW
 BEGIN
 	INSERT INTO Backup_Hospede values (old.Nome_hospede, old.CPF, old.sexo, old.telCliente, old.Data_entrada, old.Data_saida, valor_Nota(old.CPF));
+    CALL AtualizaQTDProd(old.CPF);
 END $
  
 DELIMITER ;
@@ -887,30 +888,50 @@ SELECT * FROM hotel.contador_de_Produto;
 USE `Hotel`;
 DROP procedure IF EXISTS `AtualizaQTDProd`;
 DELIMITER $$
-CREATE PROCEDURE AtualizaQTDProd (old_Cod_servico int)
+CREATE PROCEDURE AtualizaQTDProd (var_CPF VARCHAR(14))
 BEGIN
-	DECLARE result, var_Cod_produto, var_QTD INT;
+	DECLARE result_qtd_prod, result_tb_CP, var_Cod_produto, var_QTD INT;
 	DECLARE var_Nome_produto VARCHAR(25);
 	DECLARE var_Desc_produto VARCHAR(100);
+    declare	c1	cursor		
+	for	select	p.Cod_produto, p.Nome_produto, p.Desc_produto from Ser_Diversos sd, Solicitacao_Servico ss, produtos p where ss.Cod_servico = sd.Cod_servico and ss.CPF = var_CPF and sd.Cod_produto = p.Cod_produto;
+	declare	c2	cursor		
+	for	select	p.Cod_produto from Ser_Diversos sd, Solicitacao_Servico ss, produtos p where ss.Cod_servico = sd.Cod_servico and ss.CPF = var_CPF and sd.Cod_produto = p.Cod_produto;
     
-	SELECT COUNT(*) into result FROM contador_de_Produto cp where cp.Cod_produto = (SELECT DISTINCT p.Cod_produto from Ser_Diversos sd, Solicitacao_Servico ss, produtos p where ss.Cod_servico = sd.Cod_servico and sd.Cod_produto = p.Cod_produto and sd.Cod_servico = old_Cod_servico);
-	SET var_Nome_produto = (SELECT DISTINCT p.Nome_produto from Ser_Diversos sd, Solicitacao_Servico ss, produtos p where ss.Cod_servico = sd.Cod_servico and sd.Cod_produto = p.Cod_produto and sd.Cod_servico = old_Cod_servico);
-	SET var_Desc_produto = (SELECT DISTINCT p.Desc_produto from Ser_Diversos sd, Solicitacao_Servico ss, produtos p where ss.Cod_servico = sd.Cod_servico and sd.Cod_produto = p.Cod_produto and sd.Cod_servico = old_Cod_servico);
-	SET var_Cod_produto = (SELECT DISTINCT p.Cod_produto from Ser_Diversos sd, Solicitacao_Servico ss, produtos p where ss.Cod_servico = sd.Cod_servico and sd.Cod_produto = p.Cod_produto and sd.Cod_servico = old_Cod_servico);
+	open c1;
+    open c2;
     
-		IF(result > 0) then
+	SELECT COUNT(*) into result_qtd_prod from Ser_Diversos sd, Solicitacao_Servico ss, produtos p where ss.Cod_servico = sd.Cod_servico and ss.CPF = var_CPF and sd.Cod_produto = p.Cod_produto;
+    
+    WHILE result_qtd_prod <> 0 DO    
+    fetch c2 into var_Cod_produto;
+    SELECT COUNT(*) into result_tb_CP FROM contador_de_Produto cp where cp.Cod_produto = var_Cod_produto;    
+		IF(result_tb_CP > 0) then
 			SET var_QTD = (select QTD from contador_de_produto where Cod_produto = var_Cod_produto);
 			UPDATE contador_de_Produto SET QTD = (var_QTD + 1) where Cod_produto = var_Cod_produto;
 		ELSE
+			fetch c1 into var_Cod_produto, var_Nome_produto, var_Desc_produto;
 			INSERT INTO contador_de_Produto values (var_Cod_produto, var_Nome_produto, var_Desc_produto, 1);
 		END IF;
         
+        SET result_qtd_prod = result_qtd_prod - 1;        
+        END WHILE;
+        
+	close c2;   
+	close c1;     
 END $$
 DELIMITER ;
 
-CALL AtualizaQTDProd(6);
+select	p.Nome_produto, p.Desc_produto, p.Cod_produto from Ser_Diversos sd, Solicitacao_Servico ss, produtos p where ss.Cod_servico = sd.Cod_servico and ss.CPF = '375.407.454-79' and sd.Cod_produto = p.Cod_produto;	
+
+CALL AtualizaQTDProd('375.407.454-79');
 SELECT * FROM hotel.contador_de_Produto;
 truncate hotel.contador_de_Produto;
+
+DELETE FROM hospede WHERE CPF = '375.407.454-79';
+DELETE FROM hospede WHERE CPF = '849.525.773-41';
+SELECT * FROM hotel.backup_hospede;
+DELETE FROM hospede;
 -- ------------------------------------------------------------------------------
 --                 Fim Criação dos Procedimentos no SGBD                      --
 -- ------------------------------------------------------------------------------
