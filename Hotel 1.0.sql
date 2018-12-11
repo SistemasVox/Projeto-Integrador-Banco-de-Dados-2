@@ -870,20 +870,22 @@ CREATE TABLE contador_de_Produto (
     Desc_produto VARCHAR(100) NOT NULL,
     QTD INT
 );
+
+/*
 DROP trigger IF EXISTS `contador_de_Produto`;
 DELIMITER $
- 
+
 CREATE TRIGGER contador_de_Produto BEFORE DELETE 
 ON Solicitacao_Servico FOR EACH ROW
 BEGIN
 	CALL AtualizaQTDProd(old.Cod_servico);
-END $
+END $ 
  
 DELIMITER ;
 DELETE FROM hospede where CPF = '375.407.454-79';
 SELECT * FROM hotel.solicitacao_servico;
 SELECT * FROM hotel.contador_de_Produto;
-
+*/
 
 USE `Hotel`;
 DROP procedure IF EXISTS `AtualizaQTDProd`;
@@ -923,15 +925,17 @@ END $$
 DELIMITER ;
 
 select	p.Nome_produto, p.Desc_produto, p.Cod_produto from Ser_Diversos sd, Solicitacao_Servico ss, produtos p where ss.Cod_servico = sd.Cod_servico and ss.CPF = '375.407.454-79' and sd.Cod_produto = p.Cod_produto;	
+select	p.Nome_produto, p.Desc_produto, count(*) as QTD from Ser_Diversos sd, Solicitacao_Servico ss, produtos p where ss.Cod_servico = sd.Cod_servico and  sd.Cod_produto = p.Cod_produto group by 1 order by qtd desc;	
 
 CALL AtualizaQTDProd('375.407.454-79');
-SELECT * FROM hotel.contador_de_Produto;
+SELECT * FROM hotel.contador_de_Produto order by QTD desc;
 truncate hotel.contador_de_Produto;
 
 DELETE FROM hospede WHERE CPF = '375.407.454-79';
 DELETE FROM hospede WHERE CPF = '849.525.773-41';
 SELECT * FROM hotel.backup_hospede;
 DELETE FROM hospede;
+SELECT * FROM hospede;
 -- ------------------------------------------------------------------------------
 --                 Fim Criação dos Procedimentos no SGBD                      --
 -- ------------------------------------------------------------------------------
